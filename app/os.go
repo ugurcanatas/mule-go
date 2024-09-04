@@ -14,11 +14,13 @@ import (
 )
 
 type OSModel struct {
-	list          list.Model
+	list   list.Model
+	isQuit bool
+
 	choice        ios.RuntimesModel
 	runtimeChoice ios.RuntimesModel
 	deviceChoice  ios.RuntimesModel
-	isQuit        bool
+	actionChoice  ios.RuntimesModel
 
 	// IOS
 	xcrunResult ios.XCRunDevices
@@ -53,6 +55,10 @@ func (u *OSModel) SetRuntimeChoice(choice ios.RuntimesModel) {
 
 func (u *OSModel) SetDeviceChoice(choice ios.RuntimesModel) {
 	u.deviceChoice = choice
+}
+
+func (u *OSModel) SetActionChoice(choice ios.RuntimesModel) {
+	u.actionChoice = choice
 }
 
 func (u *OSModel) SetIsQuit(isQuit bool) {
@@ -116,6 +122,12 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						Identifier: i.Identifier,
 					})
 				}
+				if m.currentStepIndex == 3 {
+					m.SetActionChoice(ios.RuntimesModel{
+						Name:       i.Name,
+						Identifier: i.Identifier,
+					})
+				}
 
 				m.IncrementCurrentStepIndex()
 			}
@@ -132,7 +144,7 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				if m.currentStepIndex == 4 {
 					d := ios.Ddevices.DeviceByDeviceUDID(m.deviceChoice.Identifier)
-					ios.RunScript(d.Udid, d.State)
+					ios.RunAppleScript(m.actionChoice.Name, d.Udid, d.State)
 					m.SetIsQuit(true)
 					return m, tea.Quit
 				}

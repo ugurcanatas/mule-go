@@ -110,12 +110,9 @@ func IOSRuntimes() XCRunDevices {
 	return devices
 }
 
-func RunScript(udid string, state string) {
-	// Path to your AppleScript file
-	scriptPath := "app/ios/boot.applescript"
-
+func execute(path string, udid string, state string) {
 	// Create the command to run the script using osascript
-	cmd := exec.Command("osascript", scriptPath, udid, state)
+	cmd := exec.Command("osascript", path, udid, state)
 
 	// Run the command and capture the output
 	output, err := cmd.CombinedOutput()
@@ -128,4 +125,18 @@ func RunScript(udid string, state string) {
 	// Print the output of the script
 	fmt.Printf("Output:\n%s\n", string(output))
 	log.Printf("Output:\n%s\n", string(output))
+}
+
+func RunAppleScript(actionName string, udid string, state string) {
+	bootPath := "app/ios/boot.applescript"
+	shutdownPath := "app/ios/shutdown.applescript"
+
+	switch actionName {
+	case "Boot":
+		execute(bootPath, udid, state)
+	case "Shutdown":
+		execute(shutdownPath, udid, state)
+	default:
+		log.Fatalf("Error running AppleScript: unknown action name %s", actionName)
+	}
 }
