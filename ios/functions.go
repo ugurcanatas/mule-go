@@ -9,46 +9,6 @@ import (
 	"slices"
 )
 
-// Credit goes to https://mholt.github.io/json-to-go/
-type XCRunDevices struct {
-	Runtimes []struct {
-		BundlePath           string `json:"bundlePath"`
-		Buildversion         string `json:"buildversion"`
-		Platform             string `json:"platform"`
-		RuntimeRoot          string `json:"runtimeRoot"`
-		Identifier           string `json:"identifier"`
-		Version              string `json:"version"`
-		IsInternal           bool   `json:"isInternal"`
-		IsAvailable          bool   `json:"isAvailable"`
-		Name                 string `json:"name"`
-		SupportedDeviceTypes []struct {
-			BundlePath    string `json:"bundlePath"`
-			Name          string `json:"name"`
-			Identifier    string `json:"identifier"`
-			ProductFamily string `json:"productFamily"`
-		} `json:"supportedDeviceTypes"`
-	} `json:"runtimes"`
-}
-
-type Devices struct {
-	Devices map[string][]IOSDevice `json:"devices"`
-}
-
-// Credit goes to https://mholt.github.io/json-to-go/
-type IOSDevice struct {
-	DataPath             string `json:"dataPath"`
-	DataPathSize         int    `json:"dataPathSize"`
-	LogPath              string `json:"logPath"`
-	Udid                 string `json:"udid"`
-	IsAvailable          bool   `json:"isAvailable"`
-	LogPathSize          int    `json:"logPathSize,omitempty"`
-	DeviceTypeIdentifier string `json:"deviceTypeIdentifier"`
-	State                string `json:"state"`
-	Name                 string `json:"name"`
-}
-
-type FilteredIOSDeviceList []IOSDevice
-
 func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
 	index := slices.IndexFunc(*m, func(d IOSDevice) bool {
 		return d.Udid == udid
@@ -61,15 +21,7 @@ func NewDevicesSlice() *FilteredIOSDeviceList {
 	return (*FilteredIOSDeviceList)(&inital)
 }
 
-var CurrentDevices FilteredIOSDeviceList = *NewDevicesSlice()
-
-type RuntimesModel struct {
-	Name       string
-	Identifier string
-}
-
 func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {
-
 	cmd := exec.Command("xcrun", "simctl", "list", "devices", "--json")
 
 	out, err := cmd.Output()
@@ -125,8 +77,8 @@ func execute(path string, udid string, state string) {
 }
 
 func RunAppleScript(actionName string, udid string, state string) {
-	bootPath := "app/ios/boot.applescript"
-	shutdownPath := "app/ios/shutdown.applescript"
+	bootPath := "applescript/boot.applescript"
+	shutdownPath := "applescript/shutdown.applescript"
 
 	switch actionName {
 	case constants.DefaultIOSCommands["Boot"]:
