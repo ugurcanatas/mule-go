@@ -27,7 +27,7 @@ type OSModel struct {
 	runtimes    []ios.RuntimesModel
 	iosCommands []ios.RuntimesModel
 
-	// TODO Current implementation to track list progress is scuffed. Replace it with lists
+	// TODO Current implementation to track list progress is scuffed. Replace it with lists or rings
 	currentStepIndex uint
 }
 
@@ -143,7 +143,7 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.createCommandsList()
 				}
 				if m.currentStepIndex == 4 {
-					d := ios.Ddevices.DeviceByDeviceUDID(m.deviceChoice.Identifier)
+					d := ios.CurrentDevices.DeviceByDeviceUDID(m.deviceChoice.Identifier)
 					ios.RunAppleScript(m.actionChoice.Name, d.Udid, d.State)
 					m.SetIsQuit(true)
 					return m, tea.Quit
@@ -235,12 +235,11 @@ func InitialModel() OSModel {
 	list := customList.CreateNewList(items, constants.OsTitle)
 
 	// set default ios commands
-	commandsSet := []string{"Boot", "Erase", "Send Link", "Shutdown"}
 	commandsSlice := []ios.RuntimesModel{}
-	for i := 0; i < len(commandsSet); i++ {
+	for key := range constants.DefaultIOSCommands {
 		commandsSlice = append(commandsSlice, ios.RuntimesModel{
-			Name:       commandsSet[i],
-			Identifier: commandsSet[i],
+			Name:       constants.DefaultIOSCommands[key],
+			Identifier: constants.DefaultIOSCommands[key],
 		})
 	}
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"mule-go/constants"
 	"os/exec"
 	"slices"
 )
@@ -46,25 +47,21 @@ type IOSDevice struct {
 	Name                 string `json:"name"`
 }
 
-type FilteredIOSDeviceList struct {
-	currentDevices []IOSDevice
-}
+type FilteredIOSDeviceList []IOSDevice
 
 func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
-	index := slices.IndexFunc(m.currentDevices, func(d IOSDevice) bool {
+	index := slices.IndexFunc(*m, func(d IOSDevice) bool {
 		return d.Udid == udid
 	})
-	return m.currentDevices[index]
+	return (*m)[index]
 }
 
 func NewDevicesSlice() *FilteredIOSDeviceList {
 	inital := []IOSDevice{}
-	return &FilteredIOSDeviceList{
-		currentDevices: inital,
-	}
+	return (*FilteredIOSDeviceList)(&inital)
 }
 
-var Ddevices FilteredIOSDeviceList = *NewDevicesSlice()
+var CurrentDevices FilteredIOSDeviceList = *NewDevicesSlice()
 
 type RuntimesModel struct {
 	Name       string
@@ -88,7 +85,7 @@ func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {
 	}
 
 	l := devicesJSON.Devices[runtimeUuid]
-	Ddevices.currentDevices = l
+	CurrentDevices = l
 	return l
 }
 
@@ -132,9 +129,9 @@ func RunAppleScript(actionName string, udid string, state string) {
 	shutdownPath := "app/ios/shutdown.applescript"
 
 	switch actionName {
-	case "Boot":
+	case constants.DefaultIOSCommands["Boot"]:
 		execute(bootPath, udid, state)
-	case "Shutdown":
+	case constants.DefaultIOSCommands["Shutdown"]:
 		execute(shutdownPath, udid, state)
 	default:
 		log.Fatalf("Error running AppleScript: unknown action name %s", actionName)
