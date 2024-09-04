@@ -8,11 +8,14 @@ import (
 const IOS string = "iOS"
 const ANDROID string = "Android"
 
-const OS_TITLE string = "Select the OS Type:"
-const IOS_RUNTIME_TITLE string = "Select a runtime:"
-const IOS_DEVICES_TITLE string = "Select a device:"
+const OsTitle string = "Select the OS Type:"
+const IOSRuntimeTitle string = "Select a runtime:"
+const IOSDevicesTitle string = "Select a device:"
 
-const DEFAULT_LIST_HEIGHT int = 14
+const DefaultListHeight int = 14
+const DefaultListWidth int = 100
+
+var DefaultIOSCommands []string = []string{"Boot", "Erase", "Send Link", "Shutdown"}
 
 var (
 	TitleStyle        = lipgloss.NewStyle().MarginLeft(2)

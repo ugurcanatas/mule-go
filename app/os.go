@@ -186,10 +186,10 @@ func (model *OSModel) createDevicesListByRuntimeIdentifier(identifier string) {
 
 	runtimeIndex := slices.IndexFunc(model.runtimes, func(c ios.RuntimesModel) bool { return c.Identifier == identifier })
 
-	var deviceListTitle string = constants.IOS_DEVICES_TITLE
+	var deviceListTitle string = constants.IOSDevicesTitle
 
 	if runtimeIndex > -1 {
-		deviceListTitle = strings.Join([]string{constants.IOS_DEVICES_TITLE, "(" + model.runtimes[runtimeIndex].Name + ")"}, " - ")
+		deviceListTitle = strings.Join([]string{constants.IOSDevicesTitle, "(" + model.runtimes[runtimeIndex].Name + ")"}, " - ")
 	}
 
 	l := customList.CreateNewList(deviceListItems, deviceListTitle)
@@ -197,7 +197,6 @@ func (model *OSModel) createDevicesListByRuntimeIdentifier(identifier string) {
 }
 
 func (model *OSModel) createRuntimesList() {
-	tea.LogToFile("debug.log", "debug")
 
 	// get runtimes with xcrun command and set inside the struct
 	model.SetXCRunResult(ios.IOSRuntimes())
@@ -222,7 +221,7 @@ func (model *OSModel) createRuntimesList() {
 
 	model.SetRuntimes(runtimesByNameAndIdentifier)
 
-	l := customList.CreateNewList(runtimesListItems, constants.IOS_RUNTIME_TITLE)
+	l := customList.CreateNewList(runtimesListItems, constants.IOSRuntimeTitle)
 	model.SetList(l)
 }
 
@@ -233,7 +232,7 @@ func InitialModel() OSModel {
 		customList.Item{Name: constants.ANDROID, Identifier: constants.ANDROID},
 	}
 
-	list := customList.CreateNewList(items, constants.OS_TITLE)
+	list := customList.CreateNewList(items, constants.OsTitle)
 
 	// set default ios commands
 	commandsSet := []string{"Boot", "Erase", "Send Link", "Shutdown"}

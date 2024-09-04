@@ -7,12 +7,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type item struct {
+type Item struct {
 	Name       string
 	Identifier string
 }
-
-type Item item
 
 // FilterValue implements list.Item.
 func (i Item) FilterValue() string { return i.Identifier }
@@ -20,7 +18,6 @@ func (i Item) Title() string       { return i.Name }
 func (i Item) Description() string { return i.Identifier }
 
 func CreateNewList(items []list.Item, title string) list.Model {
-	const defaultWidth = 100
 	// TODO: Replace with this after learning about custom itemDelegate implementation
 	// l := list.New(items, itemDelegate{}, defaultWidth, constants.DEFAULT_LIST_HEIGHT)
 
@@ -29,7 +26,7 @@ func CreateNewList(items []list.Item, title string) list.Model {
 	newDefaultDelegate.Styles.SelectedTitle = newDefaultDelegate.Styles.SelectedTitle.Foreground(c).BorderLeftForeground(c)
 	newDefaultDelegate.ShowDescription = false
 
-	list := list.New(items, newDefaultDelegate, defaultWidth, constants.DEFAULT_LIST_HEIGHT)
+	list := list.New(items, newDefaultDelegate, constants.DefaultListWidth, constants.DefaultListHeight)
 	list.Title = title
 	list.SetShowStatusBar(false)
 	list.SetFilteringEnabled(false)
