@@ -1,8 +1,6 @@
 package platform
 
 import (
-	"mule-go/ios"
-
 	"github.com/charmbracelet/bubbles/list"
 )
 
@@ -10,16 +8,22 @@ type OSModel struct {
 	list   list.Model
 	isQuit bool
 
-	choice        ios.RuntimesModel
-	runtimeChoice ios.RuntimesModel
-	deviceChoice  ios.RuntimesModel
-	actionChoice  ios.RuntimesModel
+	choice        Record
+	runtimeChoice Record
+	deviceChoice  Record
+	actionChoice  Record
 
 	// IOS
-	xcrunResult ios.XCRunDevices
-	runtimes    []ios.RuntimesModel
-	iosCommands []ios.RuntimesModel
+	runtimes    []Record
+	iosCommands []Record
+
+	//
 
 	// TODO Current implementation to track list progress is scuffed. Replace it with lists or rings
 	currentStepIndex uint
+}
+
+type Record struct {
+	Name       string
+	Identifier string
 }

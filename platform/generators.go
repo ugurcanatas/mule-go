@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 
+	"mule-go/android"
 	"mule-go/constants"
 	"mule-go/customList"
 	"mule-go/ios"
@@ -22,6 +23,7 @@ func (model *OSModel) createCommandsList() {
 		})
 	}
 
+	// TODO move string to a constant
 	commandsListTitle := fmt.Sprintf("Select a command for device %s ", model.deviceChoice.Name)
 
 	l := customList.CreateNewList(commandsListItems, commandsListTitle)
@@ -40,7 +42,7 @@ func (model *OSModel) createDevicesListByRuntimeIdentifier(identifier string) {
 		})
 	}
 
-	runtimeIndex := slices.IndexFunc(model.runtimes, func(c ios.RuntimesModel) bool { return c.Identifier == identifier })
+	runtimeIndex := slices.IndexFunc(model.runtimes, func(c Record) bool { return c.Identifier == identifier })
 
 	var deviceListTitle string = constants.IOSDevicesTitle
 
@@ -55,16 +57,20 @@ func (model *OSModel) createDevicesListByRuntimeIdentifier(identifier string) {
 func (model *OSModel) createRuntimesList() {
 
 	// get runtimes with xcrun command and set inside the struct
-	model.SetXCRunResult(ios.IOSRuntimes())
+	// model.SetXCRunResult(ios.IOSRuntimes())
 
-	runtimesByNameAndIdentifier := []ios.RuntimesModel{}
+	xcRunResult := ios.IOSRuntimes()
+
+	ios.XcrunResult.SetXCRunResult(xcRunResult)
+
+	runtimesByNameAndIdentifier := []Record{}
 
 	// View slices
 	runtimesListItems := []list.Item{}
 
-	for index := range model.xcrunResult.Runtimes {
-		runtimes := model.xcrunResult.Runtimes[index]
-		runtimesByNameAndIdentifier = append(runtimesByNameAndIdentifier, ios.RuntimesModel{
+	for index := range xcRunResult.Runtimes {
+		runtimes := xcRunResult.Runtimes[index]
+		runtimesByNameAndIdentifier = append(runtimesByNameAndIdentifier, Record{
 			Name:       runtimes.Name,
 			Identifier: runtimes.Identifier,
 		})
@@ -78,5 +84,21 @@ func (model *OSModel) createRuntimesList() {
 	model.SetRuntimes(runtimesByNameAndIdentifier)
 
 	l := customList.CreateNewList(runtimesListItems, constants.IOSRuntimeTitle)
+	model.SetList(l)
+}
+
+func (model *OSModel) createAvdDevicesList() {
+	devices := android.AVDEmulators()
+
+	deviceRecords := []list.Item{}
+	for d := range devices {
+		deviceRecords = append(deviceRecords, customList.Item{
+			Name: devices[d],
+			// there is no unique identifier returned from the command
+			Identifier: devices[d],
+		})
+	}
+
+	l := customList.CreateNewList(deviceRecords, constants.IOSRuntimeTitle)
 	model.SetList(l)
 }

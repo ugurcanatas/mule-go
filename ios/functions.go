@@ -9,6 +9,10 @@ import (
 	"slices"
 )
 
+func (u *XCRunDevices) SetXCRunResult(xcrunResult XCRunDevices) {
+	*u = xcrunResult
+}
+
 func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
 	index := slices.IndexFunc(*m, func(d IOSDevice) bool {
 		return d.Udid == udid
@@ -19,6 +23,11 @@ func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
 func NewDevicesSlice() *FilteredIOSDeviceList {
 	inital := []IOSDevice{}
 	return (*FilteredIOSDeviceList)(&inital)
+}
+
+func NewXCRunResultSlice() *XCRunDevices {
+	inital := XCRunDevices{}
+	return &inital
 }
 
 func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {

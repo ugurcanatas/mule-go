@@ -39,25 +39,25 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			if ok {
 				if m.currentStepIndex == 0 {
-					m.SetChoice(ios.RuntimesModel{
+					m.SetChoice(Record{
 						Name:       i.Name,
 						Identifier: i.Identifier,
 					})
 				}
 				if m.currentStepIndex == 1 {
-					m.SetRuntimeChoice(ios.RuntimesModel{
+					m.SetRuntimeChoice(Record{
 						Name:       i.Name,
 						Identifier: i.Identifier,
 					})
 				}
 				if m.currentStepIndex == 2 {
-					m.SetDeviceChoice(ios.RuntimesModel{
+					m.SetDeviceChoice(Record{
 						Name:       i.Name,
 						Identifier: i.Identifier,
 					})
 				}
 				if m.currentStepIndex == 3 {
-					m.SetActionChoice(ios.RuntimesModel{
+					m.SetActionChoice(Record{
 						Name:       i.Name,
 						Identifier: i.Identifier,
 					})
@@ -83,6 +83,11 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, tea.Quit
 				}
 			}
+			if m.choice.Identifier == constants.ANDROID {
+				if m.currentStepIndex == 1 {
+					m.createAvdDevicesList()
+				}
+			}
 		}
 	}
 
@@ -100,9 +105,9 @@ func InitialModel() OSModel {
 	list := customList.CreateNewList(items, constants.OsTitle)
 
 	// set default ios commands
-	commandsSlice := []ios.RuntimesModel{}
+	commandsSlice := []Record{}
 	for key := range constants.DefaultIOSCommands {
-		commandsSlice = append(commandsSlice, ios.RuntimesModel{
+		commandsSlice = append(commandsSlice, Record{
 			Name:       constants.DefaultIOSCommands[key],
 			Identifier: constants.DefaultIOSCommands[key],
 		})

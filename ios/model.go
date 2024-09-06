@@ -38,13 +38,9 @@ type IOSDevice struct {
 	Name                 string `json:"name"`
 }
 
-// TODO Change name and implement an interface for more generic usage
-type RuntimesModel struct {
-	Name       string
-	Identifier string
-}
-
 // To hold the value of currently selected runtime devices slice
+// using []IOSDevice will error with invalid receiver type
 type FilteredIOSDeviceList []IOSDevice
 
 var CurrentDevices FilteredIOSDeviceList = *NewDevicesSlice()
+var XcrunResult XCRunDevices = *NewXCRunResultSlice()
