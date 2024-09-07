@@ -1,3 +1,6 @@
 package android
 
-type AndroidDevices []string
+type AndroidModel struct {
+	AndroidDevices  []string
+	deviceSelection string
+}

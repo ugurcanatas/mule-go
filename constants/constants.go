@@ -16,6 +16,7 @@ const DefaultListHeight int = 14
 const DefaultListWidth int = 100
 
 var DefaultIOSCommands map[string]string = map[string]string{"Boot": "Boot", "Erase": "Erase", "Send Link": "Send Link", "Shutdown": "Shutdown"}
+var DefaultAndroidCommands map[string]string = map[string]string{"Boot": "Boot", "Wipe": "Wipe"}
 
 var (
 	TitleStyle        = lipgloss.NewStyle().MarginLeft(2)

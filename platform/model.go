@@ -1,6 +1,8 @@
 package platform
 
 import (
+	"mule-go/ios"
+
 	"github.com/charmbracelet/bubbles/list"
 )
 
@@ -14,8 +16,8 @@ type OSModel struct {
 	actionChoice  Record
 
 	// IOS
+	xcrunResult ios.XCRunDevices
 	runtimes    []Record
-	iosCommands []Record
 
 	//
 

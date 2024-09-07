@@ -43,4 +43,3 @@ type IOSDevice struct {
 type FilteredIOSDeviceList []IOSDevice
 
 var CurrentDevices FilteredIOSDeviceList = *NewDevicesSlice()
-var XcrunResult XCRunDevices = *NewXCRunResultSlice()

@@ -1,18 +1,33 @@
 package android
 
 import (
-	"fmt"
+	"log"
 	"os/exec"
 	"slices"
 	"strings"
 )
+
+func execute(path string, device string) {
+	// Create the command to run the script using osascript
+	cmd := exec.Command("osascript", path, device)
+
+	// Run the command and capture the output
+	output, err := cmd.CombinedOutput()
+
+	// Handle any errors that occurred
+	if err != nil {
+		log.Fatalf("Error running AppleScript: %v", err)
+	}
+
+	// Print the output of the script
+	log.Printf("Output:\n%s\n", string(output))
+}
 
 func AVDEmulators() []string {
 	cmd := exec.Command("emulator", "-list-avds")
 
 	out, err := cmd.Output()
 	if err != nil {
-		fmt.Println("could not run command: ", err)
 		panic("could not run command")
 	}
 
@@ -24,4 +39,8 @@ func AVDEmulators() []string {
 	})
 
 	return devices
+}
+
+func RunAndroidEmulator(emulatorName string) {
+	execute("applescript/android/wipe.applescript", emulatorName)
 }

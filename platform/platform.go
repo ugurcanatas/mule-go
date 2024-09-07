@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 
+	"mule-go/android"
 	"mule-go/constants"
 	"mule-go/customList"
 	"mule-go/ios"
@@ -87,6 +88,14 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.currentStepIndex == 1 {
 					m.createAvdDevicesList()
 				}
+				if m.currentStepIndex == 2 {
+					m.createCommandsList()
+				}
+				if m.currentStepIndex == 3 {
+					android.RunAndroidEmulator("Galaxy_S9_API_29")
+					m.SetIsQuit(true)
+					return m, tea.Quit
+				}
 			}
 		}
 	}
@@ -104,17 +113,7 @@ func InitialModel() OSModel {
 
 	list := customList.CreateNewList(items, constants.OsTitle)
 
-	// set default ios commands
-	commandsSlice := []Record{}
-	for key := range constants.DefaultIOSCommands {
-		commandsSlice = append(commandsSlice, Record{
-			Name:       constants.DefaultIOSCommands[key],
-			Identifier: constants.DefaultIOSCommands[key],
-		})
-	}
-
 	return OSModel{
-		list:        list,
-		iosCommands: commandsSlice,
+		list: list,
 	}
 }

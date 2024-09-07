@@ -9,10 +9,6 @@ import (
 	"slices"
 )
 
-func (u *XCRunDevices) SetXCRunResult(xcrunResult XCRunDevices) {
-	*u = xcrunResult
-}
-
 func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
 	index := slices.IndexFunc(*m, func(d IOSDevice) bool {
 		return d.Udid == udid
@@ -23,11 +19,6 @@ func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
 func NewDevicesSlice() *FilteredIOSDeviceList {
 	inital := []IOSDevice{}
 	return (*FilteredIOSDeviceList)(&inital)
-}
-
-func NewXCRunResultSlice() *XCRunDevices {
-	inital := XCRunDevices{}
-	return &inital
 }
 
 func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {
@@ -81,13 +72,12 @@ func execute(path string, udid string, state string) {
 	}
 
 	// Print the output of the script
-	fmt.Printf("Output:\n%s\n", string(output))
 	log.Printf("Output:\n%s\n", string(output))
 }
 
 func RunAppleScript(actionName string, udid string, state string) {
-	bootPath := "applescript/boot.applescript"
-	shutdownPath := "applescript/shutdown.applescript"
+	bootPath := "applescript/ios/boot.applescript"
+	shutdownPath := "applescript/ios/shutdown.applescript"
 
 	switch actionName {
 	case constants.DefaultIOSCommands["Boot"]:

@@ -1,6 +1,8 @@
 package platform
 
 import (
+	"mule-go/ios"
+
 	"github.com/charmbracelet/bubbles/list"
 )
 
@@ -8,6 +10,10 @@ import (
 
 func (u *OSModel) SetRuntimes(runtimes []Record) {
 	u.runtimes = runtimes
+}
+
+func (u *OSModel) SetXCRunResult(xcrunResult ios.XCRunDevices) {
+	u.xcrunResult = xcrunResult
 }
 
 func (u *OSModel) SetList(list list.Model) {
@@ -32,10 +38,6 @@ func (u *OSModel) SetActionChoice(choice Record) {
 
 func (u *OSModel) SetIsQuit(isQuit bool) {
 	u.isQuit = isQuit
-}
-
-func (u *OSModel) AppendIOSCommands(command Record) {
-	u.iosCommands = append(u.iosCommands, command)
 }
 
 func (u *OSModel) IncrementCurrentStepIndex() {
