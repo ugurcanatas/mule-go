@@ -1,31 +1,22 @@
 package platform
 
 import (
-	"mule-go/ios"
+	"mule-go/sharedState"
 
 	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type OSModel struct {
-	list   list.Model
-	isQuit bool
+	list list.Model
 
-	choice        Record
-	runtimeChoice Record
-	deviceChoice  Record
-	actionChoice  Record
-
-	// IOS
-	xcrunResult ios.XCRunDevices
-	runtimes    []Record
-
-	//
-
-	// TODO Current implementation to track list progress is scuffed. Replace it with lists or rings
-	currentStepIndex uint
+	model tea.Model
 }
 
-type Record struct {
-	Name       string
-	Identifier string
+func (m *OSModel) QuitProgram() {
+	sharedState.QuitProgram = true
+}
+
+func (u *OSModel) SetList(list list.Model) {
+	u.list = list
 }

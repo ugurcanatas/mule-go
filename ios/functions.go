@@ -6,20 +6,7 @@ import (
 	"log"
 	"mule-go/constants"
 	"os/exec"
-	"slices"
 )
-
-func (m *FilteredIOSDeviceList) DeviceByDeviceUDID(udid string) IOSDevice {
-	index := slices.IndexFunc(*m, func(d IOSDevice) bool {
-		return d.Udid == udid
-	})
-	return (*m)[index]
-}
-
-func NewDevicesSlice() *FilteredIOSDeviceList {
-	inital := []IOSDevice{}
-	return (*FilteredIOSDeviceList)(&inital)
-}
 
 func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {
 	cmd := exec.Command("xcrun", "simctl", "list", "devices", "--json")
@@ -37,11 +24,10 @@ func IOSDevicesByRuntimeIdentifier(runtimeUuid string) []IOSDevice {
 	}
 
 	l := devicesJSON.Devices[runtimeUuid]
-	CurrentDevices = l
 	return l
 }
 
-func IOSRuntimes() XCRunDevices {
+func IOSRuntimes() RuntimesObject {
 	cmd := exec.Command("xcrun", "simctl", "list", "runtimes", "--json")
 
 	out, err := cmd.Output()
@@ -49,7 +35,7 @@ func IOSRuntimes() XCRunDevices {
 		fmt.Println("could not run command: ", err)
 		panic("could not run command")
 	}
-	var devices XCRunDevices
+	var devices RuntimesObject
 	err = json.Unmarshal(out, &devices)
 
 	if err != nil {

@@ -1,7 +1,14 @@
 package ios
 
+import (
+	"mule-go/customList"
+	"mule-go/sharedState"
+
+	"github.com/charmbracelet/bubbles/list"
+)
+
 // Credit goes to https://mholt.github.io/json-to-go/
-type XCRunDevices struct {
+type RuntimesObject struct {
 	Runtimes []struct {
 		BundlePath           string `json:"bundlePath"`
 		Buildversion         string `json:"buildversion"`
@@ -38,8 +45,61 @@ type IOSDevice struct {
 	Name                 string `json:"name"`
 }
 
-// To hold the value of currently selected runtime devices slice
-// using []IOSDevice will error with invalid receiver type
-type FilteredIOSDeviceList []IOSDevice
+type IOSModel struct {
+	uiModel    UIModel
+	stateModel StateModel
+}
 
-var CurrentDevices FilteredIOSDeviceList = *NewDevicesSlice()
+type UIModel struct {
+	list list.Model
+}
+
+type Step uint
+
+const (
+	StepRuntime Step = iota
+	StepDevice
+	StepCommand
+)
+
+type StateModel struct {
+	currentStep    Step
+	runtimesObject RuntimesObject
+	runtimes       []customList.Record
+
+	deviceSelection  customList.Record
+	runtimeSelection customList.Record
+	cmdSelection     customList.Record
+}
+
+func (model *IOSModel) QuitProgram() {
+	sharedState.QuitProgram = true
+}
+
+func (model *UIModel) SetList(list list.Model) {
+	model.list = list
+}
+
+func (model *StateModel) SetDeviceSelection(selection customList.Record) {
+	model.deviceSelection = selection
+}
+
+func (model *StateModel) SetRuntimeSelection(selection customList.Record) {
+	model.runtimeSelection = selection
+}
+
+func (model *StateModel) SetCommandSelection(selection customList.Record) {
+	model.cmdSelection = selection
+}
+
+func (model *StateModel) SetCurrentStep(step Step) {
+	model.currentStep = step
+}
+
+func (model *StateModel) SetRuntimes(runtimes []customList.Record) {
+	model.runtimes = runtimes
+}
+
+func (model *StateModel) SetRuntimesObject(runtimesObject RuntimesObject) {
+	model.runtimesObject = runtimesObject
+}

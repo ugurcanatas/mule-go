@@ -7,15 +7,15 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type Item struct {
+type Record struct {
 	Name       string
 	Identifier string
 }
 
 // FilterValue implements list.Item.
-func (i Item) FilterValue() string { return i.Identifier }
-func (i Item) Title() string       { return i.Name }
-func (i Item) Description() string { return i.Identifier }
+func (i Record) FilterValue() string { return i.Identifier }
+func (i Record) Title() string       { return i.Name }
+func (i Record) Description() string { return i.Identifier }
 
 func CreateNewList(items []list.Item, title string) list.Model {
 	// TODO: Replace with this after learning about custom itemDelegate implementation

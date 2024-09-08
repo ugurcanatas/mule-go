@@ -8,6 +8,7 @@ import (
 	"mule-go/constants"
 	"mule-go/customList"
 	"mule-go/ios"
+	"mule-go/sharedState"
 )
 
 func (m OSModel) Init() tea.Cmd {
@@ -15,7 +16,7 @@ func (m OSModel) Init() tea.Cmd {
 }
 
 func (m OSModel) View() string {
-	if m.isQuit {
+	if sharedState.QuitProgram {
 		return constants.QuitTextStyle.Render("Bye 👋🏽")
 	}
 	return "\n" + m.list.View()
@@ -32,70 +33,25 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "q", "ctrl+c":
-			m.SetIsQuit(true)
+			m.QuitProgram()
 			return m, tea.Quit
 
 		case "enter":
-			i, ok := m.list.SelectedItem().(customList.Item)
+			i, ok := m.list.SelectedItem().(customList.Record)
 
-			if ok {
-				if m.currentStepIndex == 0 {
-					m.SetChoice(Record{
-						Name:       i.Name,
-						Identifier: i.Identifier,
-					})
-				}
-				if m.currentStepIndex == 1 {
-					m.SetRuntimeChoice(Record{
-						Name:       i.Name,
-						Identifier: i.Identifier,
-					})
-				}
-				if m.currentStepIndex == 2 {
-					m.SetDeviceChoice(Record{
-						Name:       i.Name,
-						Identifier: i.Identifier,
-					})
-				}
-				if m.currentStepIndex == 3 {
-					m.SetActionChoice(Record{
-						Name:       i.Name,
-						Identifier: i.Identifier,
-					})
-				}
-
-				m.IncrementCurrentStepIndex()
+			if !ok {
+				return m, tea.Quit
 			}
 
-			if m.choice.Identifier == constants.IOS { // IOS is selected Update the list
-				if m.currentStepIndex == 1 {
-					m.createRuntimesList()
-				}
-				if m.currentStepIndex == 2 {
-					m.createDevicesListByRuntimeIdentifier(m.runtimeChoice.Identifier)
-				}
-				if m.currentStepIndex == 3 {
-					m.createCommandsList()
-				}
-				if m.currentStepIndex == 4 {
-					d := ios.CurrentDevices.DeviceByDeviceUDID(m.deviceChoice.Identifier)
-					ios.RunAppleScript(m.actionChoice.Name, d.Udid, d.State)
-					m.SetIsQuit(true)
-					return m, tea.Quit
-				}
+			if i.Identifier == constants.IOS {
+				iosModel := ios.IOSModel{}
+				iosModel.InitialModel()
+				return m.ChangeViews(&iosModel)
 			}
-			if m.choice.Identifier == constants.ANDROID {
-				if m.currentStepIndex == 1 {
-					m.createAvdDevicesList()
-				}
-				if m.currentStepIndex == 2 {
-					m.createCommandsList()
-				}
-				if m.currentStepIndex == 3 {
-					android.RunAndroidEmulator("Galaxy_S9_API_29")
-					m.SetIsQuit(true)
-					return m, tea.Quit
-				}
+			if i.Identifier == constants.ANDROID {
+				androidModel := android.AndroidModel{}
+				androidModel.InitialModel()
+				return m.ChangeViews(&androidModel)
 			}
 		}
 	}
@@ -107,8 +63,8 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // Create the initial os model
 func InitialModel() OSModel {
 	items := []list.Item{
-		customList.Item{Name: constants.IOS, Identifier: constants.IOS},
-		customList.Item{Name: constants.ANDROID, Identifier: constants.ANDROID},
+		customList.Record{Name: constants.IOS, Identifier: constants.IOS},
+		customList.Record{Name: constants.ANDROID, Identifier: constants.ANDROID},
 	}
 
 	list := customList.CreateNewList(items, constants.OsTitle)
@@ -116,4 +72,9 @@ func InitialModel() OSModel {
 	return OSModel{
 		list: list,
 	}
+}
+
+func (m OSModel) ChangeViews(model tea.Model) (tea.Model, tea.Cmd) {
+	m.model = model
+	return m.model, m.model.Init()
 }
