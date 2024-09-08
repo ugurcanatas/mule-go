@@ -54,8 +54,14 @@ func (m AndroidModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.stateModel.SetCommandSelection(i.Name)
 
 				// TODO, Handle based on commands
-				RunAndroidEmulator(m.stateModel.deviceSelection)
-				m.uiModel.list, cmd = m.uiModel.list.Update(msg)
+				if m.stateModel.cmdSelection == constants.DefaultAndroidCommands["Wipe"] {
+					Execute("applescript/android/wipe.applescript", m.stateModel.deviceSelection)
+				}
+				if m.stateModel.cmdSelection == constants.DefaultAndroidCommands["Boot"] {
+					Execute("applescript/android/boot.applescript", m.stateModel.deviceSelection)
+				}
+
+				m.uiModel.list.Update(msg)
 				return m, tea.Quit
 			}
 

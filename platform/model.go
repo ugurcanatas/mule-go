@@ -7,16 +7,16 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type OSModel struct {
+type PlatformModel struct {
 	list list.Model
 
 	model tea.Model
 }
 
-func (m *OSModel) QuitProgram() {
+func (m *PlatformModel) QuitProgram() {
 	sharedState.QuitProgram = true
 }
 
-func (u *OSModel) SetList(list list.Model) {
+func (u *PlatformModel) SetList(list list.Model) {
 	u.list = list
 }

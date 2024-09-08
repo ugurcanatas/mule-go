@@ -11,18 +11,18 @@ import (
 	"mule-go/sharedState"
 )
 
-func (m OSModel) Init() tea.Cmd {
+func (m PlatformModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m OSModel) View() string {
+func (m PlatformModel) View() string {
 	if sharedState.QuitProgram {
 		return constants.QuitTextStyle.Render("Bye 👋🏽")
 	}
 	return "\n" + m.list.View()
 }
 
-func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m PlatformModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
@@ -43,6 +43,7 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 
+			// Initialise the corresponding UI model based on platform selection
 			if i.Identifier == constants.IOS {
 				iosModel := ios.IOSModel{}
 				iosModel.InitialModel()
@@ -61,7 +62,7 @@ func (m OSModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // Create the initial os model
-func InitialModel() OSModel {
+func InitialModel() PlatformModel {
 	items := []list.Item{
 		customList.Record{Name: constants.IOS, Identifier: constants.IOS},
 		customList.Record{Name: constants.ANDROID, Identifier: constants.ANDROID},
@@ -69,12 +70,12 @@ func InitialModel() OSModel {
 
 	list := customList.CreateNewList(items, constants.OsTitle)
 
-	return OSModel{
+	return PlatformModel{
 		list: list,
 	}
 }
 
-func (m OSModel) ChangeViews(model tea.Model) (tea.Model, tea.Cmd) {
+func (m PlatformModel) ChangeViews(model tea.Model) (tea.Model, tea.Cmd) {
 	m.model = model
 	return m.model, m.model.Init()
 }

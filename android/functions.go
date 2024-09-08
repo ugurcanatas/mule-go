@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func execute(path string, device string) {
+func Execute(path string, device string) {
 	// Create the command to run the script using osascript
 	cmd := exec.Command("osascript", path, device)
 
@@ -39,8 +39,4 @@ func AVDEmulators() []string {
 	})
 
 	return devices
-}
-
-func RunAndroidEmulator(emulatorName string) {
-	execute("applescript/android/wipe.applescript", emulatorName)
 }
