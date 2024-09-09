@@ -61,8 +61,10 @@ func (model *IOSModel) createDevicesListByRuntimeIdentifier(identifier string) {
 	deviceListItems := []list.Item{}
 
 	for x := range devices {
+		device := devices[x]
+		name := fmt.Sprintf("%s - (%s)", device.Name, device.State)
 		deviceListItems = append(deviceListItems, customList.Record{
-			Name:       devices[x].Name,
+			Name:       name,
 			Identifier: devices[x].Udid,
 		})
 	}
